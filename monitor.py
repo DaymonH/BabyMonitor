@@ -1,4 +1,4 @@
-#Baby Sleep Monitor Script
+# Baby Sleep Monitor Script
 
 from sqlalchemy import create_engine, Column, Integer, DateTime, Float, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -63,47 +63,47 @@ class BabySleepMonitor:
         return movement_level
 
     def save_data(self, movement_level, frame):
-    	try:
-        # Print to console if significant movement is detected
-        	if movement_level > self.movement_threshold:
-            		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            		print(f"Movement detected at {timestamp} with level: {movement_level}")
+        try:
+            # Print to console if significant movement is detected
+            if movement_level > self.movement_threshold:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                print(f"Movement detected at {timestamp} with level: {movement_level}")
 
-            		# Save frame if significant movement detected
-            		frame_path = f'frames/frame_{timestamp}.jpg'
-            		cv2.imwrite(frame_path, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-    			print(f"Frame saved at {frame_path}")
+                # Save frame if significant movement detected
+                frame_path = f'frames/frame_{timestamp}.jpg'
+                cv2.imwrite(frame_path, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+                print(f"Frame saved at {frame_path}")
 
-    	except Exception as e:
-	        print(f"Error saving data: {e}")
+        except Exception as e:
+            print(f"Error saving data: {e}")
 
-	def run(self):
-    		print("Starting sleep monitoring...")
-    		try:
-        		while True:
-            			# Capture frame
-            			frame = self.camera.capture_array()
+    def run(self):
+        print("Starting sleep monitoring...")
+        try:
+            while True:
+                # Capture frame
+                frame = self.camera.capture_array()
 
-            			# Detect movement
-            			movement_level = self.detect_movement(frame)
+                # Detect movement
+                movement_level = self.detect_movement(frame)
 
-            			# Save data
-            			self.save_data(movement_level, frame)
+                # Save data
+                self.save_data(movement_level, frame)
 
-            			# Wait for next capture
-            			time.sleep(self.capture_interval)
+                # Wait for next capture
+                time.sleep(self.capture_interval)
 
-    		except KeyboardInterrupt:
-        		print("\nStopping monitoring...")
-    		except Exception as e:
-        		print(f"Error occurred: {e}")
-   		 finally:
-        		self.camera.stop()
-        		print("Monitoring stopped")
+        except KeyboardInterrupt:
+            print("\nStopping monitoring...")
+        except Exception as e:
+            print(f"Error occurred: {e}")
+        finally:
+            self.camera.stop()
+            print("Monitoring stopped")
 
 if __name__ == "__main__":
     # Database URL (not used anymore, but kept for future use)
     db_url = 'mysql+pymysql://RasberryPi:RasberryPi@/192.168.1.112/MySQL80'
 
-    monitor = BabySleepMonitor(db_url=db_url, capture_interval=.5)  # Capture every 1 second
+    monitor = BabySleepMonitor(db_url=db_url, capture_interval=0.5)  # Capture every 0.5 seconds
     monitor.run()
